@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -31,14 +30,21 @@ void init()
     arguments = (char *)malloc(ARG_BUFFSIZE);
 }
 
+void onProgram_exit()
+{
+    free(arguments);
+}
+
 void cd_main(char * path)
 {
     int fd;
     fd = chdir(path);
     if(fd < 0){
-        printf(stdout, "Error opening directory\n");
+     //   printf(stdout, "Error opening directory\n");
+        onProgram_exit();
         exit(EXIT_FAILURE);
     }
+    onProgram_exit();
 }
 
 int main(int argc, char **argv)
@@ -52,3 +58,4 @@ int main(int argc, char **argv)
     cd_main(arguments);
     exit(EXIT_SUCCESS);
 }
+
