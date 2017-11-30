@@ -76,7 +76,7 @@ int main(int argc, const char **argv)
             fprintf(stderr, "number of arguments exceeded %d\n", len);
             exit(1);
         }
-
+-
     arg:
         args[len++] = (char *)arg;
         interpret = 0;
