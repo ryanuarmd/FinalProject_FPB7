@@ -49,6 +49,9 @@ uint32 Kmap[64] =   // floor(abs(sin(i+1))) * pow(2,32); i=0...63
 
 void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
 {
+    byte * newmsg = NULL;
+    unsigned long newlength = inputmsglen+1;
+    printf("%c\n",inputmsg);
     uint32 rotate[]=
     {
         7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -57,15 +60,18 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
         6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
     };
     
-    
-    
+    // the new length of inputmsg after padding
+    while(newlength%512 != 448) newlength++;
+    newlength /= 8; // length in byte
+
+    newmsg = calloc(newlength + 64, 1); // allocate and zeroize with unit of byte, 1 -> 1 byte
+    memcpy(newmsg, inputmsg, inputmsglen);
+    newmsg[inputmsglen] = 0x80; // in byte unit, 10000000
+
 }
 
 int main(int argc, char **argv)
 {
-    // printint(1,t,10,1);
-    // printf(1,"\n");
-    printf("%d\n",F(8,4,2));
     if(argc < 2){
         printf("Invalid use of md5sum command\n");
     }
