@@ -59,7 +59,7 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
         4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
         6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
     };
-    
+// 1st - Append Padding Bits
     // the new length of inputmsg after padding
     while(newlength%512 != 448) newlength++;
     newlength /= 8; // length in byte
@@ -67,7 +67,9 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
     newmsg = calloc(newlength + 64, 1); // allocate and zeroize with unit of byte, 1 -> 1 byte
     memcpy(newmsg, inputmsg, inputmsglen); // copy inputmsglen bytes from inputmsg into newmsg
     newmsg[inputmsglen] = 0x80; // in byte unit, 10000000
-    
+// 2nd - Append Length
+    uint32 bitslen = 8*inputmsglen;
+    memcpy(newmsg+newlength, &bitslen, 8);
 }
 
 int main(int argc, char **argv)
