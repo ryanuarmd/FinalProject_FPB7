@@ -26,7 +26,6 @@ static const char base64char[65]={
     '='
 };
 
-uint32 hash1, hash2, hash3, hash4;
 uint32 Kmap[64] =   // floor(abs(sin(i+1))) * pow(2,32); i=0...63
 {
     0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
@@ -51,7 +50,12 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
 {
     byte * newmsg = NULL;
     unsigned long newlength = inputmsglen+1;
-    printf("%c\n",inputmsg);
+// used in init buffer in 3rd step
+    uint32 wordA = 0x67452301;
+    uint32 wordB = 0xefcdab89;
+    uint32 wordC = 0x98badcfe;
+    uint32 wordD = 0x10325476;
+
     uint32 rotate[]=
     {
         7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -71,6 +75,16 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
     uint32 bitslen = 8*inputmsglen;
     memcpy(newmsg+newlength, &bitslen, 4);
 
+// 3rd - Process newmsg in 32-bit to produce 16-bit byte
+    int offset;
+    for(offset = 0; offset<newlength; offset += 32)
+    {
+        uint32 * var = (uint32*)(newmsg+offset);
+        uint32 a = wordA;
+        uint32 b = wordB;
+        uint32 c = wordC;
+        uint32 d = wordD;
+    }
 
 }
 
