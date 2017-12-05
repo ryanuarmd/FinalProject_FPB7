@@ -65,9 +65,9 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
     newlength /= 8; // length in byte
 
     newmsg = calloc(newlength + 64, 1); // allocate and zeroize with unit of byte, 1 -> 1 byte
-    memcpy(newmsg, inputmsg, inputmsglen);
+    memcpy(newmsg, inputmsg, inputmsglen); // copy inputmsglen bytes from inputmsg into newmsg
     newmsg[inputmsglen] = 0x80; // in byte unit, 10000000
-
+    
 }
 
 int main(int argc, char **argv)
