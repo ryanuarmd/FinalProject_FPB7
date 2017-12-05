@@ -69,7 +69,9 @@ void md5sum_main(byte * inputmsg, unsigned long inputmsglen)
     newmsg[inputmsglen] = 0x80; // in byte unit, 10000000
 // 2nd - Append Length
     uint32 bitslen = 8*inputmsglen;
-    memcpy(newmsg+newlength, &bitslen, 8);
+    memcpy(newmsg+newlength, &bitslen, 4);
+
+
 }
 
 int main(int argc, char **argv)
