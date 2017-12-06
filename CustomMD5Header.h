@@ -1,12 +1,18 @@
 typedef unsigned char byte;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
+typedef unsigned long long uint64;
 
 typedef struct {
     uint32 state[4];    // wordA, wordB, wordC, wordD
-    uint32 count[2];    // 64 - bit word
+    uint64 count;    // 64 - bit word
     byte buffer[64];    // input buffer
 }md5context_t;
+
+#define WORD_A 0x67452301
+#define WORD_B 0xefcdab89
+#define WORD_C 0x98badcfe
+#define WORD_D 0x10325476
 
 uint32 Kmap[64] =   // floor(abs(sin(i+1))) * pow(2,32); i=0...63
 {
@@ -64,4 +70,13 @@ uint32 rotate[]=
     A += I(B, C, D) + x + (uint32)(t); \
     A  = LROT(A, s); \
     A += B; \
+}
+
+void Init_Context(md5context_t * ctx){
+    ctx->count[0] = 0;
+    ctx->count[1] = 0;
+    ctx->state[0] = (uint32)WORD_A;
+    ctx->state[1] = (uint32)WORD_B;
+    ctx->state[2] = (uint32)WORD_C;
+    ctx->state[3] = (uint32)WORD_D;
 }
