@@ -73,10 +73,13 @@ uint32 rotate[]=
 }
 
 void Init_Context(md5context_t * ctx){
-    ctx->count[0] = 0;
-    ctx->count[1] = 0;
+    ctx->count = 0;
     ctx->state[0] = (uint32)WORD_A;
     ctx->state[1] = (uint32)WORD_B;
     ctx->state[2] = (uint32)WORD_C;
     ctx->state[3] = (uint32)WORD_D;
+}
+
+void Update_Context(md5context_t * ctx, byte * input, uint32 len){
+    
 }
