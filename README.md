@@ -22,6 +22,3 @@ Repo Final Project Kelas Sisop B (B7 &amp; B16)
 * 5111640000016	TAUFIQ TIRTAJIWANGGA
 * 5111640000142	KURNIAWAN ADJI SAPUTRO
 * 5111640000159	RAHMAD YANUAR MURADI DARMANSYAH
-
-<h2>Important Note</h2>
-File yang dipush sudah di enkripsi (untuk menghindari di COPAS hehe). Untuk membacanya bisa mengontak salah satu anggota kelompok. Terima kasih
