@@ -68,24 +68,28 @@ void FF(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
     *A += F(B, C, D) + x + (uint32)(t);
     *A = LROT(*A, s);
     *A += B;
+  //  printf("%x\n",*A);
 }
 
 void GG(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
     *A += G(B, C, D) + x + (uint32)(t);
     *A = LROT(*A, s);
     *A += B;
+    // printf("%x %x %x\n",B, C, D);
 }
 
 void HH(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
     *A += H(B, C, D) + x + (uint32)(t);
     *A = LROT(*A, s);
     *A += B;
+    // printf("%x %x %x\n",B, C, D);
 }
 
 void II(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
     *A += I(B, C, D) + x + (uint32)(t);
     *A = LROT(*A, s);
     *A += B;
+    // printf("%x %x %x\n",B, C, D);
 }
 
 void Init_Context(md5context_t * ctx){
@@ -98,8 +102,8 @@ void Init_Context(md5context_t * ctx){
 void Decode(uint32 * dst, byte * src, uint64 len){
     uint64 i,j;
     for(i=0, j=0; j<len; i++, j+=4){
-        dst[i] = ((uint32)src[j] | (uint32)src[j+1] | 
-                    (uint32)src[j+2] | (uint32)src[j+3]);
+        dst[i] = ((uint32)src[j] | (uint32)(src[j+1]<<8) | 
+                    (uint32)(src[j+2]<<16) | (uint32)(src[j+3]<<24));
     }
 }
 
@@ -120,18 +124,22 @@ void Transform(md5context_t * ctx, byte * msg){
     //Round 1
     for(i=0; i<16; i++){
         FF(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[i], rotate[i], Kmap[i]);
+     //   printf("%x %x %x %x\n",XX[(15-i)%4], XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4]);
     }
     //Round 2
     for(i=0; i<16; i++){
         GG(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[(1+(i)*5)%16], rotate[i+16], Kmap[i+16]);
+     //   printf("%x %x %x %x\n",XX[(15-i)%4], XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4]);
     }
     //Round 3
     for(i=0; i<16; i++){
         HH(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[(5+(i)*3)%16], rotate[i+32], Kmap[i+32]);
+      //  printf("%x %x %x %x\n",XX[(15-i)%4], XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4]);
     }
     //Round 4
     for(i=0; i<16; i++){
         II(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[((i)*7)%16], rotate[i+48], Kmap[i+48]);
+      //  printf("%x %x %x %x\n",XX[(15-i)%4], XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4]);
     }
     ctx->state[0] += XX[0];
     ctx->state[1] += XX[1];
