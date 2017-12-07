@@ -84,11 +84,34 @@ void Init_Context(md5context_t * ctx){
     ctx->state[3] = (uint32)WORD_D;
 }
 
+void Decode(uint32 * dst, byte * src, uint64 len){
+    uint64 i,j;
+    for(i=0, j=0; j<len; i++, j+=4){
+        dst[i] = ((uint32)src[j] | (uint32)src[j+1] | 
+                    (uint32)src[j+2] | (uint32)src[j+3]);
+    }
+}
+
+void Encode(uint32 * src, byte * dst, uint64 len){
+
+}
+
 void Transform(md5context_t * ctx, byte * msg, uint64 len){
     uint32 XX[4] = {
         ctx->state[0], ctx->state[1], ctx->state[2], ctx->state[3]
     };
     uint32 X[16];
+    Decode(X, msg, 64);
+
+    //Round 1
+
+    //Round 2
+
+    //Round 3
+
+    //Round 4
+
+    
 }
 
 void Update_Context(md5context_t * ctx, byte * input, uint64 len){
