@@ -1,3 +1,7 @@
+//#include "umalloc.c"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 typedef unsigned char byte;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
@@ -80,6 +84,20 @@ void Init_Context(md5context_t * ctx){
     ctx->state[3] = (uint32)WORD_D;
 }
 
-void Update_Context(md5context_t * ctx, byte * input, uint32 len){
-    
+void Transform(md5context_t * ctx, byte * msg, uint64 len){
+    uint32 XX[4] = {
+        ctx->state[0], ctx->state[1], ctx->state[2], ctx->state[3]
+    };
+    uint32 X[16];
+}
+
+void Update_Context(md5context_t * ctx, byte * input, uint64 len){
+    uint64 newlength = len + (64-len%64);
+    byte * input_pad = (byte *)malloc(newlength);
+    memcpy(input_pad,input,len);
+    uint32 i;
+    for(i=len+1; i<newlength; i++) input_pad[i] = (byte)0x0;
+    input_pad[len] = (byte)0x80;
+    memcpy(input_pad+newlength-8,&len, 8);
+    Transform(ctx, input_pad, newlength);
 }
