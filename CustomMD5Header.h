@@ -9,22 +9,12 @@ typedef unsigned long long uint64;
 
 typedef struct {
     uint32 state[4];    // wordA, wordB, wordC, wordD
-    uint64 count;    // 64 - bit word
-    byte buffer[64];    // input buffer
 }md5context_t;
 
 #define WORD_A 0x67452301
 #define WORD_B 0xefcdab89
 #define WORD_C 0x98badcfe
 #define WORD_D 0x10325476
-
-static const char base64char[65]={
-    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-    'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f',
-    'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
-    'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/',
-    '='
-};
 
 uint32 Kmap[64] =   // floor(abs(sin(i+1))) * pow(2,32); i=0...63
 {
@@ -99,17 +89,11 @@ void II(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
 }
 
 void Init_Context(md5context_t * ctx){
-    ctx->count = 0;
     ctx->state[0] = (uint32)WORD_A;
     ctx->state[1] = (uint32)WORD_B;
     ctx->state[2] = (uint32)WORD_C;
     ctx->state[3] = (uint32)WORD_D;
 }
-
-// void appendLength(uint32 * pointer, uint64 len){
-//     *pointer = (uint32)(len >> 32);
-//     *(pointer+32) = (uint32)(len);
-// }
 
 void Decode(uint32 * dst, byte * src, uint64 len){
     uint64 i,j;
@@ -122,7 +106,7 @@ void Decode(uint32 * dst, byte * src, uint64 len){
 void Encode(uint32 * src, byte * dst){
     int i;
     for(i=0; i<16; i++){
-        dst[i] = (byte)(src[3-(i/4)] >> ((i%4)*8));
+        dst[i] = (byte)((src[(i/4)] >> ((i%4)*8))&0x000000ff);
     }
 }
 
@@ -162,12 +146,14 @@ void Update_Context(md5context_t * ctx, byte * input, uint64 len){
     uint64 i;
     for(i=len+1; i<newlength; i++) input_pad[i] = (byte)0x0;
     input_pad[len] = (byte)0x80;
+    len *= 8;
     memcpy(input_pad+newlength-8,&len, 1);
     // for(i=0; i<newlength; i++)
     //     printf("%d ",input_pad[i]);
     // printf("\n");
     for(i=0; i<newlength; i+=64)
         Transform(ctx, input_pad);
+    free(input_pad);
 }
 
 void Finalization(md5context_t * ctx, byte * hash){

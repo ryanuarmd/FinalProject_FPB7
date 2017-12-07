@@ -26,12 +26,9 @@ void md5string(md5context_t * ctx, char * input){
     Init_Context(ctx);
     Update_Context(ctx, input, len);
     Finalization(ctx,result);
- //   printf(1,"%d",len);
-    //final
- //   printf(1,"%s",result);
     int i;
     for(i=0; i<16; i++)
-        printf("%c",base64char[((uint32)result[i])%64]);
+        printf("%2.2x",result[i]);
     printf("\n");
     return;
 }
