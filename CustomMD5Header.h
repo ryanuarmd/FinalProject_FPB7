@@ -1,7 +1,9 @@
-//#include "umalloc.c"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+#include "fcntl.h"
+#include "fs.h"
+
 typedef unsigned char byte;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
@@ -10,6 +12,13 @@ typedef unsigned long long uint64;
 typedef struct {
     uint32 state[4];    // wordA, wordB, wordC, wordD
 }md5context_t;
+
+// memcpy exists to placate GCC.  Use memmove.
+void*
+memcpy(void *dst, void *src, uint n)
+{
+  return memmove(dst, src, n);
+}
 
 #define WORD_A 0x67452301
 #define WORD_B 0xefcdab89
@@ -149,7 +158,7 @@ void Transform(md5context_t * ctx, byte * msg){
 
 void Update_Context(md5context_t * ctx, byte * input, uint64 len){
     uint64 newlength = len + (64-len%64);
-    byte * input_pad = (byte *)malloc(newlength);
+    byte * input_pad = (byte *)malloc((uint)newlength);
     memcpy(input_pad,input,len);
     uint64 i;
     for(i=len+1; i<newlength; i++) input_pad[i] = (byte)0x0;
