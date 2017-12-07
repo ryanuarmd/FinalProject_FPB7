@@ -46,34 +46,48 @@ uint32 rotate[]=
     6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
 };
 
-#define F(x,y,z) ((x & y) | ((~x) & z))
-#define G(x,y,z) ((x & z) | (y & (~z)))
-#define H(x,y,z) (x ^ y ^ z)
-#define I(x,y,z) (y ^ (x | (~z)))
-#define LROT(integer, n_shift) ((integer << n_shift) | (x >> (32-n_shift)))
-
-#define FF(A,B,C,D,x,s,t){ \
-    A += F(B, C, D,) + x + (uint32)(t); \
-    A = LROT(A, s); \
-    A += B; \
+uint32 F(uint32 x, uint32 y, uint32 z){
+    return ((x & y) | ((~x) & z));
 }
 
-#define GG(A,B,C,D,x,s,t){ \
-    A += G(B, C, D) + x + (uint32)(t); \
-    A  = LROT(A, s); \
-    A += B; \
+uint32 G(uint32 x, uint32 y, uint32 z){
+    return ((x & z) | (y & (~z)));
 }
 
-#define HH(A,B,C,D,x,s,t){ \
-    A += H(B, C, D,) + x + (uint32)(t); \
-    A = LROT(A, s); \
-    A += B; \
+uint32 H(uint32 x, uint32 y, uint32 z){
+    return (x ^ y ^ z);
 }
 
-#define II(A,B,C,D,x,s,t){ \
-    A += I(B, C, D) + x + (uint32)(t); \
-    A  = LROT(A, s); \
-    A += B; \
+uint32 I(uint32 x, uint32 y, uint32 z){
+    return (y ^ (x | (~z)));
+}
+
+uint32 LROT(uint32 integer, uint32 n_shift){
+    return ((integer << n_shift) | (integer >> (32-n_shift)));
+}
+
+void FF(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
+    *A += F(B, C, D) + x + (uint32)(t);
+    *A = LROT(A, s);
+    *A += B;
+}
+
+void GG(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
+    *A += G(B, C, D) + x + (uint32)(t);
+    *A = LROT(A, s);
+    *A += B;
+}
+
+void HH(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
+    *A += H(B, C, D) + x + (uint32)(t);
+    *A = LROT(A, s);
+    *A += B;
+}
+
+void II(uint32 * A, uint32 B, uint32 C, uint32 D,uint32 x, uint32 s, uint32 t){
+    *A += I(B, C, D) + x + (uint32)(t);
+    *A = LROT(A, s);
+    *A += B;
 }
 
 void Init_Context(md5context_t * ctx){
@@ -102,16 +116,27 @@ void Transform(md5context_t * ctx, byte * msg, uint64 len){
     };
     uint32 X[16];
     Decode(X, msg, 64);
-
+    uint64 i;
     //Round 1
-
+    for(i=0; i<16; i++){
+        FF(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[i], rotate[i], Kmap[i]);
+    }
     //Round 2
-
+    for(i=0; i<16; i++){
+        GG(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[(1+(i)*5)%16], rotate[i+16], Kmap[i+16]);
+    }
     //Round 3
-
+    for(i=0; i<16; i++){
+        HH(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[(5+(i)*3)%16], rotate[i+32], Kmap[i+32]);
+    }
     //Round 4
-
-    
+    for(i=0; i<16; i++){
+        II(&XX[(16-i)%4], XX[(17-i)%4], XX[(18-i)%4], XX[(19-i)%4], X[((i)*7)%16], rotate[i+48], Kmap[i+48]);
+    }
+    ctx->state[0] += XX[0];
+    ctx->state[1] += XX[1];
+    ctx->state[2] += XX[2];
+    ctx->state[3] += XX[3];
 }
 
 void Update_Context(md5context_t * ctx, byte * input, uint64 len){
