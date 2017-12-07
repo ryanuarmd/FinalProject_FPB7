@@ -24,7 +24,7 @@ void md5string(md5context_t * ctx, char * input){
     uint32 len = strlen(input);
     byte result[16];
     Init_Context(ctx);
-    Update_Context(ctx, input, len);
+    Update_Context(ctx, (byte*)input, len);
     Finalization(ctx,result);
     int i;
     for(i=0; i<16; i++)
